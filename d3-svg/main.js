@@ -1,11 +1,12 @@
-let climate_daly_data = [
-        {region: "Low-and-middle-income countries of the African Region", deaths: 57},
-        {region: "Low-and-middle-income countries of the Americas", deaths: 2},
-        {region: "Low-and-middle-income countries of the Eastern Mediterranean Region", deaths: 20},
-         {region: "Low-and-middle-income countries of the European Region", deaths: 0.67},
-         {region: "Low-and-middle-income countries of the South-East Asia Region", deaths: 58},
-        {region: "Low-and-middle-income countries of the Western Pacific Region", deaths: 4},
-        {region: "High income countries", deaths: 0.23}
+let edu_income_data = [
+        {degree: "Doctoral degree", income: 1623},
+        {degree: "Professional degree", income: 1730},
+        {degree: "Master's degree", income: 1341},
+         {degree: "Bachelor's degree", income: 1137},
+         {degree: "Associate's degree", income: 798},
+        {degree: "Some college, no degree", income: 738},
+        {degree: "High school diploma", income: 678},
+        {degree: "Less than a high school diploma", income: 493}
  ];
 
 
@@ -18,14 +19,14 @@ let divSelection = d3.select("body").selectAll("div").selectAll("div")
 let listSelection = d3.select("body").selectAll("ol").selectAll("li")
 
 divSelection
-	.data(climate_daly_data)
+	.data(edu_income_data)
 	.enter()
 	.append("div")
 	.attr("class", "bar")
 	// .attr("bar", function(d, i){ return "element-"+i; })
 	// .attr("bar", "elements")
 	// .text("DIV TEST!")
-	.style("width", function(d){ return d.deaths * 8 +"px"; })
+	.style("width", function(d){ return d.income / 2 +"px"; })
 	// .on("mouseover", function(d, i){return toggleClass(i, d3.select(this)) });
 	// .on("click", function(d, i){
 	// d3.select(this).text(d)
@@ -40,10 +41,10 @@ divSelection
 	});
 
 listSelection
-	.data(climate_daly_data)
+	.data(edu_income_data)
 	.enter()
 	.append("li")
-	.text(function(d){ return d.region +": "+ d.deaths;})
+	.text(function(d){ return d.degree +": "+ d.income;})
 	.on("mouseover", function(d, i){
   	toggleClass(i+1, true)
   	// d3.select(this).classed("highlightText", true)
