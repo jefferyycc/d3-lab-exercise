@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css?family=Thasadith:400,700');
+
+body{
+  font-family: 'Thasadith', sans-serif;
+}
+
+h3 {
+  text-align: center;
+  color: #0769ad;
+}
+
+li{
+ cursor: pointer;
+}
+
+.bar {
+ background: #f5b634;
+ border: 4px solid #0769ad;
+ height: 20px;
+}
+
+.highlightText {
+ font-weight: 700;
+ color: #0769ad;
+}
+
+.highlightBar {
+  background-color: #0769ad;
+}
