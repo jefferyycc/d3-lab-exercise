@@ -18,14 +18,6 @@ var dataset = [
   [480, 55]
 ];
 
-var dataset2 = [
-  [60, 63],
-  [23, 48],
-  [547, 3],
-  [94, 99],
-  [243, 45]
-];
-
 //Step 3. scale function
 var xScale = d3.scaleLinear()
   .domain([0, d3.max(dataset, function(d) {
@@ -76,65 +68,3 @@ svg.selectAll("circle")
   })
   .attr("r", 5)
   .attr("fill", "blue");
-
-// On click, update with new data
-d3.select("h4")
-  .on("click", function() {
-    var numValues = dataset.length; // Get original dataset's length
-    var maxRange = Math.random() * 1000; // Get max range of new values
-    // dataset = []; // Initialize empty array
-    // for (var i = 0; i < numValues; i++) {
-    //   var newNumber1 = Math.floor(Math.random() * maxRange); // Random int for x
-    //   var newNumber2 = Math.floor(Math.random() * maxRange); // Random int for y
-    //   dataset.push([newNumber1, newNumber2]); // Add new numbers to array
-    // }
-    dataset = dataset2;
-
-    // Update scale domains
-    xScale.domain([0, d3.max(dataset, function(d) {
-      return d[0];
-    })]);
-    yScale.domain([0, d3.max(dataset, function(d) {
-      return d[1];
-    })]);
-
-    // Update circles
-    svg.selectAll("circle")
-      .data(dataset2) // Update with new data
-      .transition() // Transition from old to new
-      .duration(1000) // Length of animation
-      .each(function() { // Start animation
-        d3.select(this) // 'this' means the current element
-          .attr("fill", "red") // Change color
-          .attr("r", 8); // Change size
-      })
-      .delay(function(d, i) {
-        return i / dataset.length * 500; // Dynamic delay (i.e. each item delays a little longer)
-      })
-      //.ease("linear")  // Transition easing - default 'variable' (i.e. has acceleration), also: 'circle', 'elastic', 'bounce', 'linear'
-      .attr("cx", function(d) {
-        return xScale(d[0]); // Circle's X
-      })
-      .attr("cy", function(d) {
-        return yScale(d[1]); // Circle's Y
-      })
-      .each(function() { // End animation
-        d3.select(this) // 'this' means the current element
-          .transition()
-          .duration(500)
-          .attr("fill", "blue") // Change color
-          .attr("r", 5); // Change radius
-      });
-
-    // Update X Axis
-    svg.select("x axis")
-      .transition()
-      .duration(1000)
-      .call(xAxis);
-
-    // Update Y Axis
-    svg.select("y axis")
-      .transition()
-      .duration(100)
-      .call(yAxis);
-  });
