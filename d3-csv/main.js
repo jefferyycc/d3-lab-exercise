@@ -1,38 +1,26 @@
-// created a number of variables to hold the margin information,
-// width, and height of the graph.
-var margin = {
-    top: 20,
-    right: 20,
-    bottom: 30,
-    left: 40
-  },
-  width = 960 - margin.left - margin.right,
-  height = 500 - margin.top - margin.bottom,
-  padding = 40;
+//Step 1. set the width and height of the SVG
+var w = 600;
+var h = 400;
+var padding = 40;
 
 // x- and y- scale
 var xScale = d3.scaleLinear()
-  .range([0, width]);
+  .range([padding, w - padding]);
 var yScale = d3.scaleLinear()
-  .range([height, 0]);
-
-// select svg
-var svg = d3.select("body").append("svg")
-  .attr("width", width + margin.left + margin.right)
-  .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-  .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  .range([h - padding, padding]);
 
 // import data
 d3.csv("data.csv")
   .then(function(data) {
     console.log(data);
+    console.log("import data sucessfully!");
     // Coerce the strings to numbers.
     data.forEach(function(d) {
       d.x = +d.x;
       d.y = +d.y;
     });
 
+    //Step 3. scale function
     // Compute the scales’ domains.
     xScale.domain(d3.extent(data, function(d) {
       return d.x;
@@ -42,24 +30,44 @@ d3.csv("data.csv")
       return d.y;
     })).nice();
 
-    // Add the x-axis.
+    //Step 4. set up the x- and y- axis
+    var xAxis = d3.axisBottom().scale(xScale).ticks(5);
+    var yAxis = d3.axisLeft().scale(yScale).ticks(5);
+
+    //Step 5. create svg element
+    var svg = d3.select("body")
+      .append("svg")
+      .attr("width", w)
+      .attr("height", h);
+
+    //Step 6. Call the x axis in a group tag
     svg.append("g")
       .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(xScale));
+      .attr("transform", "translate(0," + (h - padding) + ")")
+      .call(xAxis);
 
-    // Add the y-axis.
+    //Step 7. Call the y axis in a group tag
     svg.append("g")
       .attr("class", "y axis")
-      .call(d3.axisLeft(yScale));
+      .attr("transform", "translate(" + padding + ", 0)")
+      .call(yAxis);
 
-    // Add the points!
-    svg.selectAll(".point")
+    //Step 8. appends a circle for each datapoint
+    svg.selectAll("circle")
       .data(data)
-      .enter().append("path")
-      .attr("class", "point")
-      .attr("d", d3.symbol().type(d3.symbolCircle))
-      .attr("transform", function(d) {
-        return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
-      });
+      .enter()
+      .append("circle")
+      .attr("cx", function(d) {
+        return xScale(d.x);
+        // return d.x;
+      })
+      .attr("cy", function(d) {
+        return yScale(d.y);
+      })
+      .attr("r", 5)
+      .attr("fill", "blue");
+  })
+  .catch(function(error) {
+    // error handling
+    console.log("Error when importing csv!");
   });
