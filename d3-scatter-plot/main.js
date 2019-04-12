@@ -11,7 +11,7 @@ var padding = 40;
 // dataset.push([380, 33]);
 // dataset.push([480, 55]);
 var dataset = [
-  [50, 8],
+  [52, 8],
   [100, 15],
   [220, 29],
   [380, 33],
