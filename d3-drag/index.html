@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title> Clik and Drag </title>
+  <h1> Clik and Drag </h1>
+  <script src="https://d3js.org/d3.v5.min.js"> </script>
+  <style>
+    body {
+      font: 12px sans-serif;
+    }
+
+    .dot {
+      fill: steelblue;
+    }
+
+    svg {
+      border-color: black;
+      border-style: solid;
+      border-width: 1px;
+    }
+  </style>
+</head>
+
+<body>
+  <script>
+    // The Dataset in JSON format
+    dataset = [{
+        x: 100,
+        y: 100,
+        value: 50,
+        city: "Cambridge"
+      },
+      {
+        x: 175,
+        y: 250,
+        value: 80,
+        city: "Boston"
+      },
+      {
+        x: 300,
+        y: 100,
+        value: 30,
+        city: "Brookline"
+      },
+      {
+        x: 400,
+        y: 200,
+        value: 40,
+        city: "Somerville"
+      },
+      {
+        x: 225,
+        y: 125,
+        value: 20,
+        city: "Watertown"
+      },
+      {
+        x: 450,
+        y: 100,
+        value: 50,
+        city: "Medford"
+      }
+    ];
+
+    // Create SVG
+    var svg = d3.select("body")
+      .append("svg")
+      .attr("width", 720)
+      .attr("height", 400);
+
+    // Set up a color scale (color our dots)
+    var color = d3.scaleOrdinal()
+      .range(d3.schemeCategory10);
+
+    // Create Circles
+    svg.selectAll("circle")
+      .data(dataset)
+      .enter().append("circle")
+      .attr("cx", function(d) {
+        return d.x;
+      })
+      .attr("cy", function(d) {
+        return d.y;
+      })
+      .attr("r", function(d) {
+        return d.value;
+      })
+      .style("fill", function(d, i) {
+        return color(i);
+      })
+      .call(d3.drag()
+        .on("start", dragstarted)
+        .on("drag", dragged)
+        .on("end", dragended));
+
+    // Function to handle what happens when drag is started
+    function dragstarted(d) {
+      d3.select(this).raise().classed("active", true);
+    }
+
+    // Function to handle what happens when drag is in progress
+    function dragged(d) {
+      d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
+    }
+
+    // Function to handle what happens when drag is ended
+    function dragended(d) {
+      d3.select(this).classed("active", false);
+    }
+  </script>
+</body>
+
+</html>

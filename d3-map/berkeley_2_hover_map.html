@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>My map</title>
+  <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
+  <!-- <link rel="stylesheet" type="text/css" href="map.css"> -->
+  <style>
+    h1, h2 {
+        position: absolute;
+        left: 10px;
+        font-size: 3em;
+        font-weight: 100;
+    }
+    h2 {
+        top: 90px;
+        font-size: 2em;
+    }
+  </style>
+</head>
+
+<body>
+  <h1> Berkeley PD - Calls for Service (not criminal reports) </h1>
+  <h2> </h2>
+  <div id="container" class="svg-container"></div>
+  <script type="text/javascript">
+    var w = 800;
+    var h = 600;
+
+    var svg = d3.select("body").append("svg")
+      .attr("preserveAspectRatio", "xMinYMin meet")
+      .style("background-color", "#ffffff")
+      .attr("viewBox", "0 0 " + w + " " + h)
+      .classed("svg-content", true);
+
+    var projection = d3.geoAlbers()
+      .translate([w / 2, h / 2])
+      .scale(300000)
+      .rotate([122.28, 0])
+      .center([0, 37.86]);
+
+    var path = d3.geoPath().projection(projection);
+
+    // load data
+    var neighborhoods = d3.json("berkeley_neighborhoods2.geojson");
+    var pd_call = d3.json("berkeley_pd_call2.json");
+
+    var colorScale = d3.scaleSequential(d3.interpolateReds)
+        .domain([0, 6]);
+
+    Promise.all([neighborhoods, pd_call]).then(function(values) {
+      // draw map
+      svg.selectAll("path")
+        .data(values[0].features)
+        .enter()
+        .append("path")
+        .attr("class", "continent")
+        .attr("fill", "#ccc")
+        .attr("d", path);
+
+      // draw points
+      svg.selectAll("circle")
+        .data(values[1].features)
+        .enter()
+        .append("path")
+        // .style("fill", function(d) { return colorScale(d.properties.CVDOW); })
+        // .style("fill", function(d) { return colorScale(6); })
+        .attr("fill", "#900")
+        .attr("stroke", "#999")
+        .attr("d", path)
+        .attr("class", "incident")
+        .on("mouseover", function(d) {
+          d3.select("h2").text(d.properties.Block_Location);
+          d3.select(this).attr("class", "incident hover");
+        })
+        .on("mouseout", function(d) {
+          d3.select("h2").text("");
+          d3.select(this).attr("class", "incident");
+        });
+
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,21 @@
+{
+  "nodes":[
+    {"node":0,"name":"US"},
+    {"node":1,"name":"Canada"},
+    {"node":2,"name":"China"},
+    {"node":3,"name":"Mexico"},
+    {"node":4,"name":"Korea"},
+    {"node":5,"name":"Japan"},
+    {"node":6,"name":"Germany"},
+    {"node":7,"name":"UK"}
+    ],
+    "links":[
+    {"source":0,"target":1,"value":9},
+    {"source":1,"target":3,"value":4},
+    {"source":1,"target":4,"value":3},
+    {"source":1,"target":5,"value":2},
+    {"source":0,"target":2,"value":7},
+    {"source":2,"target":6,"value":4},
+    {"source":2,"target":7,"value":3}
+    ]
+}

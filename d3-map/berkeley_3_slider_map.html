@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>My map</title>
+  <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
+  <!-- <link rel="stylesheet" type="text/css" href="map.css"> -->
+  <style>
+    /* body {
+      position: absolute;
+      font-family: "Proxima Nova", "Montserrat", sans-serif;
+    }*/
+    h1, h2 {
+        position: absolute;
+        left: 10px;
+        font-size: 3em;
+        font-weight: 100;
+    }
+    h2 {
+        top: 90px;
+        font-size: 2em;
+    }
+
+    .hover {
+        fill: yellow;
+    }
+
+    #sliderContainer {
+        position: absolute;
+        top: 180px;
+        left: 10px;
+        font-size: 2.5em;
+    }
+    .slider-width {
+      width: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <h1> Berkeley PD - Calls for Service (not criminal reports) </h1>
+  <div id="sliderContainer" class="slider-width">
+    <!-- <input id="timeslide" type="range" min="0" max="6" value="0" step="1" /><br>
+  <span id="range">Sunday</span> -->
+    <input id="timeslide" type="range" min="0" max="6" value="0" step="1" /><br>
+    <span id="range">Sunday</span>
+  </div>
+  <h2> </h2>
+  <!-- <div id="container" class="svg-container"></div> -->
+  <script type="text/javascript">
+    var w = 800;
+    var h = 580;
+    var inputValue = null;
+    // var day_of_week = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    var dayweek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+
+    var svg = d3.select("body").append("svg")
+      .attr("preserveAspectRatio", "xMinYMin meet")
+      .style("background-color", "#ffffff")
+      .attr("viewBox", "0 0 " + w + " " + h)
+      .classed("svg-content", true);
+
+    var projection = d3.geoAlbers()
+      .translate([w / 2, h / 2])
+      .scale(300000)
+      .rotate([122.28, 0])
+      .center([0, 37.86]);
+
+    var path = d3.geoPath().projection(projection);
+
+    // load data
+    var neighborhoods = d3.json("berkeley_neighborhoods2.geojson");
+    var pd_call = d3.json("berkeley_pd_call2.json");
+
+    var colorScale = d3.scaleSequential(d3.interpolateReds).domain([0, 6]);
+    var colorPaired = d3.scaleOrdinal(d3.schemePaired);
+
+    Promise.all([neighborhoods, pd_call]).then(function(values) {
+      // draw map
+      svg.selectAll("path")
+        .data(values[0].features)
+        .enter()
+        .append("path")
+        .attr("class", "continent")
+        .attr("fill", "#ccc")
+        .attr("d", path);
+
+      // draw points
+      svg.selectAll("circle")
+        .data(values[1].features)
+        .enter()
+        .append("path")
+        // .style("fill", function(d) { return colorScale(d.properties.CVDOW); })
+        .attr("fill", function(d) { return colorPaired(6); })
+        .attr("stroke", function(d) { return colorPaired(7); })
+        // .attr("fill", "#900")
+        // .attr("stroke", "#999")
+        .attr("d", path)
+        .attr("class", "incident")
+        .on("mouseover", function(d) {
+          d3.select("h2").text(d.properties.Block_Location);
+          d3.select(this).attr("class", "incident hover");
+        })
+        .on("mouseout", function(d) {
+          d3.select("h2").text("");
+          d3.select(this).attr("class", "incident");
+        });
+
+      // when the input range changes update the value
+      d3.select("#timeslide").on("input", function() {
+        update(+this.value);
+      });
+
+    });
+
+    // update the fill of each SVG of class "incident"
+    function update(value) {
+      document.getElementById("range").innerHTML = dayweek[value];
+      inputValue = dayweek[value];
+      d3.selectAll(".incident")
+        .attr("fill", dateMatch);
+      // console.log(inputValue);
+    }
+
+    function dateMatch(data, value) {
+      var dow = data.properties.CVDOW;
+      var dowStr = dayweek[dow];
+      if (inputValue == dowStr) {
+        this.parentElement.appendChild(this);
+        return "red";
+      } else {
+        return "#999";
+      };
+    }
+
+    function initialDate(d, i) {
+      var dow = data.properties.CVDOW;
+      var dowStr = dayweek[dow];
+      if (dowStr == 0) {
+        this.parentElement.appendChild(this);
+        return "red";
+      } else {
+        return "#999";
+      };
+    }
+  </script>
+</body>
+
+</html>
